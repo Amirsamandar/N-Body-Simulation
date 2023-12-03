@@ -1,17 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-class DaynamicalSystem:
+class DynamicalSystem:
     
     def __init__(self, size):
         
         self.size = size
         self.bodies = []
-        self.fig , self.ax = plt.subplots(1,1, subplot_kw={"projection" : "3d"}, figsize = (self.size/50 , self.size/50))
 
-    def add_body(self,body):
+        self.fig , self.ax = plt.subplots(1,1, subplot_kw={"projection" : "3d"}, figsize = (self.size/50 , self.size/50))
+        self.fig.tight_layout()
+
+    def add_body(self, body):
        self.bodies.append(body)
 
+    
     def update_all(self):
         for body in self.bodies:
             body.motion()
@@ -51,6 +54,7 @@ class NBodies:
 
     def display(self):
         self.dynamics.ax.plot(*self.position,marker="o", markersize=self.display_size , color = self.color)
+      
 
 
 
