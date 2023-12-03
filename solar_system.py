@@ -18,14 +18,12 @@ class DynamicalSystem:
     def update_all(self):
         for body in self.bodies:
             body.motion()
-            body.display()
 
     def display_all(self):
-        self.ax.set_xlim((-self.size/2,self.size/2))
-        self.ax.set_ylim((-self.size/2,self.size/2))
-        self.ax.set_zlim((-self.size/2,self.size/2))
-        plt.pause(0.001)
-        self.ax.clear()
+        for body in self.bodies:
+            body.display()
+             
+       
    
 
 
@@ -54,6 +52,11 @@ class NBodies:
 
     def display(self):
         self.dynamics.ax.plot(*self.position,marker="o", markersize=self.display_size , color = self.color)
+        self.dynamics.ax.set_xlim((-self.dynamics.size/2,self.dynamics.size/2))
+        self.dynamics.ax.set_ylim((-self.dynamics.size/2,self.dynamics.size/2))
+        self.dynamics.ax.set_zlim((-self.dynamics.size/2,self.dynamics.size/2))
+        plt.pause(0.001)
+        self.dynamics.ax.clear()
       
 
 
