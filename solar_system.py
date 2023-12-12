@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from itertools import combinations
 
 class DynamicalSystem:
     def __init__(self, size):
@@ -18,13 +19,14 @@ class DynamicalSystem:
 
     def update_all(self):
         # Update the motion and display of all celestial bodies in the system
+        self.bodies.sort(key= lambda item: item.position[0])
         for body in self.bodies:
             body.motion()
             body.display()
 
     def display_all(self): 
         # Display all celestial bodies in the system
-        plt.pause(0.001)
+        plt.pause(0.01)
         self.ax.clear()
         self.ax.set_xlim((-self.size / 2, self.size / 2))
         self.ax.set_ylim((-self.size / 2, self.size / 2))
@@ -33,9 +35,15 @@ class DynamicalSystem:
     def dynamical_interaction(self):
         # Calculate gravitational interactions between all pairs of celestial bodies
         bodies_copy = self.bodies.copy()
-        for idx, first in enumerate(bodies_copy):
-            for second in bodies_copy[idx + 1:]:
-                first.gravitational_interaction(second)
+        # Generate pairs of bodies
+        body_pairs = combinations(bodies_copy, 2)
+        # Apply gravitational interaction for each pair
+        for first, second in body_pairs:
+            first.gravitational_interaction(second)
+        # bodies_copy = self.bodies.copy()
+        # for idx, first in enumerate(bodies_copy):
+        #     for second in bodies_copy[idx + 1:]:
+        #         first.gravitational_interaction(second)
 
 
 
@@ -50,7 +58,7 @@ class NBodies:
         self.dynamical_box.add_body(self)
 
         # Determine the display size based on the mass
-        self.display_size = int(max(np.log2(self.mass), 10))
+        self.display_size = int(max(2*np.log2(self.mass), 10))
         self.color = "black"
 
     def motion(self):
@@ -59,7 +67,7 @@ class NBodies:
 
     def display(self):
         # Display the celestial body in the 3D plot
-        self.dynamical_box.ax.plot(*self.position, marker="o", markersize=self.display_size, color=self.color)
+        self.dynamical_box.ax.plot(*self.position, marker="o", markersize=self.display_size + self.position[0] / 30, color=self.color)
         
     def gravitational_interaction(self, other):
         # Calculate gravitational interaction between two celestial bodies
@@ -80,22 +88,3 @@ class CelestialBody(NBodies):
         self.color = color
 
 
-
-
-
-
-# Create a dynamical system
-solar = DynamicalSystem(400)
-
-# Create celestial bodies (e.g., Sun, Earth, Mars) and add them to the system
-planets = (
-    CelestialBody(solar, mass=10_000, color="yellow"),
-    CelestialBody(solar, position=np.array([150, 50, 0.]), velocity=np.array([0., 5, 5]), color="blue"),
-    CelestialBody(solar, mass=20., position=np.array([100., -50, 150]), velocity=np.array([5., 0, 0]), color="red")
-)
-
-# Run the simulation loop
-while True:
-    solar.dynamical_interaction()
-    solar.update_all()
-    solar.display_all()
