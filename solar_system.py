@@ -89,13 +89,14 @@ class NBodies:
         if self.dynamical_box.projection2D :
             self.dynamical_box.ax3D.plot(*self.position, marker="o", markersize=self.display_size + self.position[0] / 30, color=self.color)
             self.dynamical_box.ax3D.plot(self.position[0],self.position[1], -self.dynamical_box.size/2 , marker="o", markersize=self.display_size/2 , color = "grey")
-            self.dynamical_box.ax2D.plot(self.position[0],self.position[1],  marker="_",color=self.color)
+            self.dynamical_box.ax2D.plot(self.position[0],self.position[1],  marker="o",color=self.color)
         else:
            self.dynamical_box.ax.plot(*self.position, marker="o", markersize=self.display_size + self.position[0] / 30, color=self.color)
         
     def gravitational_interaction(self, other):
         # Calculate gravitational interaction between two celestial bodies
-        G = 1
+        G = 1 # Gravitational constant (m^3 kg^(-1) s^(-2))
+        distance_vec = other.position - self.position
         distance_vec = self.position - other.position
         distance_mag = np.sqrt(distance_vec @ distance_vec)
         gravity_force = G * self.mass * other.mass / distance_mag**2
