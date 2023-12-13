@@ -3,15 +3,24 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 
 class DynamicalSystem:
-    def __init__(self, size):
+    def __init__(self, size, projection2D = False , view = (0,0)):
         # Initialize the dynamical system with a specified size
         self.size = size
+        self.projection2D = projection2D
         self.bodies = []
+        self.view = view 
 
         # Create a 3D subplot for visualization
-        self.fig, self.ax = plt.subplots(1, 1, subplot_kw={"projection": "3d"}, figsize=(self.size / 50, self.size / 50))
-        self.fig.tight_layout()
-        self.ax.view_init(0, 0)
+        if projection2D:
+            self.fig =  plt.figure(figsize =(self.size / 25, self.size / 25))
+            self.ax3D = self.fig.add_subplot(1, 2, 1, projection = '3d')
+            self.ax2D = self.fig.add_subplot(1,2,2)
+            self.fig.tight_layout()
+            self.ax3D.view_init(10, 0)
+        else:
+            self.fig, self.ax =  plt.subplots(1, 1, subplot_kw={"projection": "3d"}, figsize=(self.size / 50, self.size / 50))
+            self.fig.tight_layout()
+            self.ax.view_init(self.view[0], self.view[1])
 
     def add_body(self, body):
         # Add a celestial body to the system
@@ -26,11 +35,21 @@ class DynamicalSystem:
 
     def display_all(self): 
         # Display all celestial bodies in the system
-        plt.pause(0.01)
-        self.ax.clear()
-        self.ax.set_xlim((-self.size / 2, self.size / 2))
-        self.ax.set_ylim((-self.size / 2, self.size / 2))
-        self.ax.set_zlim((-self.size / 2, self.size / 2))
+        if self.projection2D:
+           plt.pause(0.01)
+           self.ax3D.clear()
+           self.ax3D.set_xlim((-self.size / 2, self.size / 2))
+           self.ax3D.set_ylim((-self.size / 2, self.size / 2))
+           self.ax3D.set_zlim((-self.size / 2, self.size / 2))
+           self.ax2D.set_xlim((-self.size / 2, self.size / 2))
+           self.ax2D.set_ylim((-self.size / 2, self.size / 2))
+        else:
+           plt.pause(0.01)
+           self.ax.clear()
+           self.ax.set_xlim((-self.size / 2, self.size / 2))
+           self.ax.set_ylim((-self.size / 2, self.size / 2))
+           self.ax.set_zlim((-self.size / 2, self.size / 2))
+
 
     def dynamical_interaction(self):
         # Calculate gravitational interactions between all pairs of celestial bodies
@@ -67,7 +86,12 @@ class NBodies:
 
     def display(self):
         # Display the celestial body in the 3D plot
-        self.dynamical_box.ax.plot(*self.position, marker="o", markersize=self.display_size + self.position[0] / 30, color=self.color)
+        if self.dynamical_box.projection2D :
+            self.dynamical_box.ax3D.plot(*self.position, marker="o", markersize=self.display_size + self.position[0] / 30, color=self.color)
+            self.dynamical_box.ax3D.plot(self.position[0],self.position[1], -self.dynamical_box.size/2 , marker="o", markersize=self.display_size/2 , color = "grey")
+            self.dynamical_box.ax2D.plot(self.position[0],self.position[1],  marker="_",color=self.color)
+        else:
+           self.dynamical_box.ax.plot(*self.position, marker="o", markersize=self.display_size + self.position[0] / 30, color=self.color)
         
     def gravitational_interaction(self, other):
         # Calculate gravitational interaction between two celestial bodies
