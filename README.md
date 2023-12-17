@@ -80,7 +80,7 @@ Contributions are welcome! If you find any issues or have improvements, feel fre
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ```
 
 Make sure to replace placeholders like `your-username` in the clone URL with your actual GitHub username. Additionally, you might want to include a `requirements.txt` file with the dependencies mentioned in the "Dependencies" section.
