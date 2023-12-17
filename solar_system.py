@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 
 class DynamicalSystem:
-    def __init__(self, size, projection2D = False , view = (0,0)):
+    def __init__(self, size, projection2D = False , view = (0,0), restitution = 0.0 , closed = False):
         # Initialize the dynamical system with a specified size
         self.size = size
         self.projection2D = projection2D
+        self.restitution = restitution
+        self.closed = closed
         self.bodies = []
         self.view = view 
 
@@ -59,30 +61,36 @@ class DynamicalSystem:
         # Apply gravitational interaction for each pair
         for first, second in body_pairs:
             first.gravitational_interaction(second)
-        # bodies_copy = self.bodies.copy()
-        # for idx, first in enumerate(bodies_copy):
-        #     for second in bodies_copy[idx + 1:]:
-        #         first.gravitational_interaction(second)
-
-
+       
 
 
 class NBodies:
-    def __init__(self, dynamical_box, mass, position=np.array([0., 0., 0.]), velocity=np.array([0., 0., 0.])):
+    def __init__(self, dynamical_box, mass, position=np.array([0., 0., 0.]), velocity=np.array([0., 0., 0.]), density = 2):
         # Initialize a celestial body with mass, position, and velocity
         self.dynamical_box = dynamical_box
         self.mass = mass
         self.position = position
         self.velocity = velocity
+        self.density = density
         self.dynamical_box.add_body(self)
 
         # Determine the display size based on the mass
         self.display_size = int(max(2*np.log2(self.mass), 10))
         self.color = "black"
 
+        #actual size of the body based on the density
+        self.radius = ((3*self.mass/self.density)/(4*np.pi))**(1/3)
+
     def motion(self):
         # Update the position of the celestial body based on its velocity
         self.position += self.velocity
+
+        # Check for boundary collisions
+        if self.dynamical_box.closed :
+            for i in range(3):
+                if abs(self.position[i]) > self.dynamical_box.size / 2:
+                  self.velocity[i] *= -1  # Reflect velocity for simple boundary behavior
+
 
     def display(self):
         # Display the celestial body in the 3D plot
@@ -96,20 +104,42 @@ class NBodies:
     def gravitational_interaction(self, other):
         # Calculate gravitational interaction between two celestial bodies
         G = 1 # Gravitational constant (m^3 kg^(-1) s^(-2))
-        distance_vec = other.position - self.position
         distance_vec = self.position - other.position
-        distance_mag = np.sqrt(distance_vec @ distance_vec)
+        distance_mag = np.linalg.norm(distance_vec)
         gravity_force = G * self.mass * other.mass / distance_mag**2
         self.velocity += -(gravity_force / (distance_mag * self.mass)) * distance_vec
         other.velocity += (gravity_force / (distance_mag * other.mass)) * distance_vec
+
+        if np.linalg.norm(self.position - other.position) < 1:
+            self.collide(other)
+
+    def collide(self, other):
+        # Inelastic collision between two bodies
+        total_mass = self.mass + other.mass
+        relative_velocity = self.velocity - other.velocity
+
+        # Calculate the normal vector
+        normal_vector = (other.position - self.position) / np.linalg.norm(other.position - self.position)
+
+
+        # Calculate the normal impulse
+        Jn = (1 + self.dynamical_box.restitution) * (self.mass * other.mass) / total_mass * np.dot(relative_velocity, normal_vector)
+
+        # Update velocities
+        self.velocity += Jn / self.mass * normal_vector
+        other.velocity -= Jn / other.mass * normal_vector
+
+
+
+      
 
 
 
 
 class CelestialBody(NBodies): 
-    def __init__(self, dynamical_box, mass=10., position=np.array([0.0, 0.0, 0.0]), velocity=np.array([0.0, 0.0, 0.0]), color="black"):
+    def __init__(self, dynamical_box, mass=10., position=np.array([0.0, 0.0, 0.0]), velocity=np.array([0.0, 0.0, 0.0]), density = 2 , color="black"):
         # Initialize a celestial body with additional properties such as color
-        super(CelestialBody, self).__init__(dynamical_box, mass, position, velocity)
+        super(CelestialBody, self).__init__(dynamical_box, mass, position, velocity, density)
         self.color = color
 
 

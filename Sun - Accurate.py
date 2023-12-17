@@ -1,27 +1,18 @@
 from solar_system import DynamicalSystem, CelestialBody
 import numpy as np
 
-solar = DynamicalSystem(400, projection2D =True)
+solar = DynamicalSystem(400, projection2D =True ,restitution =0, closed = True)
 
-Sun = CelestialBody(solar, mass = 100, color = "yellow")
-planets = (
-    CelestialBody(
-        solar,
-        position=np.array([150, 50., 0]),
-        velocity=np.array([0, 0., 0]), color = "blue"
-    ),
-    CelestialBody(
-        solar,
-        mass=20,
-        position=np.array([100., -50, 150.]),
-        velocity=np.array([0, 0., 0])
-    )
-)
-for _ in range(100):
+Sun = CelestialBody(solar, mass = 100_000, color = "yellow")
+
+#CelestialBody(solar, position=np.array([150, 0., 0]), velocity=np.array([0, 0., 0]), color = "blue")
+CelestialBody(solar,mass= 100, position=np.array([150, 10., 0]), velocity=np.array([0, 20., 0]), color = "blue")
+
+
+for _ in range(200):
     solar.dynamical_interaction()
     solar.update_all()
-    print(Sun.position)
+    solar.display_all()
 
 
 
-print(f"the final {Sun.position}")

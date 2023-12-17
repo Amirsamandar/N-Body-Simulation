@@ -21,3 +21,5 @@ while True:
     solar.dynamical_interaction()
     solar.update_all()
     solar.display_all()
+
+   
