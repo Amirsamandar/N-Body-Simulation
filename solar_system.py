@@ -1,3 +1,56 @@
+"""
+=====================================================
+                  N-Body Simulation
+=====================================================
+
+This code simulates the motion and interaction of celestial bodies in a dynamical system with gravitational forces
+and inelastic collisions.
+
+Classes:
+--------
+
+1. **DynamicalSystem:**
+   - Represents the overall dynamical system containing celestial bodies.
+   - **Parameters:**
+     - `size`: Size of the system.
+     - `time_step`: Time step for numerical integration (default: 1).
+     - `projection2D`: Flag indicating 2D projection (default: False).
+     - `view`: Tuple specifying the initial view angles (default: (0, 0)).
+     - `restitution`: Coefficient of restitution for collisions (default: 0.0).
+     - `closed`: Flag indicating if the system has closed boundaries (default: False).
+   - **Methods:**
+     - `add_body(body)`: Add a celestial body to the system.
+     - `update_all()`: Update the motion and display of all celestial bodies.
+     - `display_all()`: Display all celestial bodies in the system.
+     - `dynamical_interaction()`: Calculate gravitational interactions between celestial bodies.
+
+2. **NBodies:**
+   - Represents a celestial body in the system.
+   - **Parameters:**
+     - `dynamical_box`: DynamicalSystem instance to which the body belongs.
+     - `mass`: Mass of the celestial body.
+     - `position`: Initial position of the body (default: [0., 0., 0.]).
+     - `velocity`: Initial velocity of the body (default: [0., 0., 0.]).
+     - `density`: Density of the body (default: 2).
+   - **Methods:**
+     - `motion(time_step)`: Update the position of the celestial body based on its velocity.
+     - `display()`: Display the celestial body in the 3D plot.
+     - `gravitational_interaction(other)`: Calculate gravitational interaction with another body.
+     - `collide(other)`: Inelastic collision with another body.
+
+3. **CelestialBody(NBodies):**
+   - Represents a celestial body with additional properties such as color.
+   - **Parameters:**
+     - `dynamical_box`: DynamicalSystem instance to which the body belongs.
+     - `mass`: Mass of the celestial body (default: 10.0).
+     - `position`: Initial position of the body (default: [0., 0., 0.]).
+     - `velocity`: Initial velocity of the body (default: [0., 0., 0.]).
+     - `density`: Density of the body (default: 2).
+     - `color`: Color of the celestial body (default: "black").
+
+"""
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import combinations
