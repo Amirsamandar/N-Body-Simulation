@@ -48,7 +48,7 @@ Note: Ensure that the required libraries (`numpy` and `matplotlib`) are installe
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Amirsamandar/n-body-simulation.git
+   git clone https://github.com/Amirsamandar/N-Body-Simulation.git
    ```
 
 2. Navigate to the project directory:
