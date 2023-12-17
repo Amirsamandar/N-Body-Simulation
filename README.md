@@ -23,16 +23,22 @@ The simulation consists of three classes:
 
 ```python
 # Example usage:
-time_step = 0.01  # Choose an appropriate time step
-solar = DynamicalSystem(400, time_step, projection2D=True, restitution=0, closed=True)
-body1 = CelestialBody(solar, mass=10., position=np.array([0., 20., 0.]), velocity=np.array([1., 0., 0.]), density=2,
-                      color="red")
-body2 = CelestialBody(solar, mass=15., position=np.array([0., -20., 0.]), velocity=np.array([-1., 0., 0.]), density=2,
-                      color="blue")
-solar.dynamical_interaction()
-solar.update_all()
-solar.display_all()
-plt.show()
+system = DynamicalSystem(size=400, projection2D=True , view = (10,0))
+
+# Sun
+sun = CelestialBody(system, mass=1000, position=np.array([0.0, 0.0, 0.0]), velocity=np.array([0.0, 0.0, 0.0]), color="yellow")
+
+# Planets
+mercury = CelestialBody(system, mass=1, position=np.array([30.0, 0.0, 0.0]), velocity=np.array([0.0, 1.3, 0.0]), color="grey")
+venus = CelestialBody(system, mass=3, position=np.array([50.0, 0.0, 0.0]), velocity=np.array([0.0, 2.5, 0.0]), color="orange")
+earth = CelestialBody(system, mass=5, position=np.array([80.0, 0.0, 0.0]), velocity=np.array([0.0, 2.0, 0.0]), color="blue")
+mars = CelestialBody(system, mass=2, position=np.array([110.0, 0.0, 0.0]), velocity=np.array([0.0, 1.5, 0.0]), color="red")
+
+# Simulate the solar system for several steps
+for _ in range(500):
+    system.dynamical_interaction()
+    system.update_all()
+    system.display_all()
 ```
 
 Note: Ensure that the required libraries (`numpy` and `matplotlib`) are installed before running the code.
