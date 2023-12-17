@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 
 class DynamicalSystem:
-    def __init__(self, size, projection2D = False , view = (0,0), restitution = 0.0 , closed = False):
+    def __init__(self, size,time_step=1, projection2D = False , view = (0,0), restitution = 0.0 , closed = False):
         # Initialize the dynamical system with a specified size
         self.size = size
+        self.time_step = time_step
         self.projection2D = projection2D
         self.restitution = restitution
         self.closed = closed
@@ -32,7 +33,7 @@ class DynamicalSystem:
         # Update the motion and display of all celestial bodies in the system
         self.bodies.sort(key= lambda item: item.position[0])
         for body in self.bodies:
-            body.motion()
+            body.motion(self.time_step)
             body.display()
 
     def display_all(self): 
@@ -81,9 +82,9 @@ class NBodies:
         #actual size of the body based on the density
         self.radius = ((3*self.mass/self.density)/(4*np.pi))**(1/3)
 
-    def motion(self):
+    def motion(self , time_step):
         # Update the position of the celestial body based on its velocity
-        self.position += self.velocity
+        self.position += self.velocity * time_step
 
         # Check for boundary collisions
         if self.dynamical_box.closed :
@@ -110,7 +111,7 @@ class NBodies:
         self.velocity += -(gravity_force / (distance_mag * self.mass)) * distance_vec
         other.velocity += (gravity_force / (distance_mag * other.mass)) * distance_vec
 
-        if np.linalg.norm(self.position - other.position) < 1:
+        if np.linalg.norm(self.position - other.position) < 2*self.radius:
             self.collide(other)
 
     def collide(self, other):
