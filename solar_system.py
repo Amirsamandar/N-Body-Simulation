@@ -56,11 +56,12 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 
 class DynamicalSystem:
-    def __init__(self, size,time_step=1, projection2D = False , view = (0,0), restitution = 0.0 , closed = False):
+    def __init__(self, size, time_step=1., projection2D = False, view = (0,0), restitution = 1.0, closed = False , frame_speed = 0.01):
         # Initialize the dynamical system with a specified size
         self.size = size
         self.time_step = time_step
         self.projection2D = projection2D
+        self.frame_speed = frame_speed
         self.restitution = restitution
         self.closed = closed
         self.bodies = []
@@ -92,7 +93,7 @@ class DynamicalSystem:
     def display_all(self): 
         # Display all celestial bodies in the system
         if self.projection2D:
-           plt.pause(0.01)
+           plt.pause(self.frame_speed)
            self.ax3D.clear()
            self.ax3D.set_xlim((-self.size / 2, self.size / 2))
            self.ax3D.set_ylim((-self.size / 2, self.size / 2))
@@ -100,7 +101,7 @@ class DynamicalSystem:
            self.ax2D.set_xlim((-self.size / 2, self.size / 2))
            self.ax2D.set_ylim((-self.size / 2, self.size / 2))
         else:
-           plt.pause(0.01)
+           plt.pause(self.frame_speed)
            self.ax.clear()
            self.ax.set_xlim((-self.size / 2, self.size / 2))
            self.ax.set_ylim((-self.size / 2, self.size / 2))
@@ -109,17 +110,15 @@ class DynamicalSystem:
 
     def dynamical_interaction(self):
         # Calculate gravitational interactions between all pairs of celestial bodies
-        bodies_copy = self.bodies.copy()
-        # Generate pairs of bodies
-        body_pairs = combinations(bodies_copy, 2)
+        body_pairs = combinations(self.bodies, 2)
         # Apply gravitational interaction for each pair
         for first, second in body_pairs:
-            first.gravitational_interaction(second)
+            first.gravitational_interaction(second, self.time_step)
        
 
 
 class NBodies:
-    def __init__(self, dynamical_box, mass, position=np.array([0., 0., 0.]), velocity=np.array([0., 0., 0.]), density = 2):
+    def __init__(self, dynamical_box, mass, position=np.array([0., 0., 0.]), velocity=np.array([0., 0., 0.]), density = 2.):
         # Initialize a celestial body with mass, position, and velocity
         self.dynamical_box = dynamical_box
         self.mass = mass
@@ -143,7 +142,7 @@ class NBodies:
         if self.dynamical_box.closed :
             for i in range(3):
                 if abs(self.position[i]) > self.dynamical_box.size / 2:
-                  self.velocity[i] *= -1  # Reflect velocity for simple boundary behavior
+                  self.velocity[i] *= -1.  # Reflect velocity for simple boundary behavior
 
 
     def display(self):
@@ -155,14 +154,14 @@ class NBodies:
         else:
            self.dynamical_box.ax.plot(*self.position, marker="o", markersize=self.display_size + self.position[0] / 30, color=self.color)
         
-    def gravitational_interaction(self, other):
+    def gravitational_interaction(self, other,time_step):
         # Calculate gravitational interaction between two celestial bodies
         G = 1 # Gravitational constant (m^3 kg^(-1) s^(-2))
         distance_vec = self.position - other.position
         distance_mag = np.linalg.norm(distance_vec)
         gravity_force = G * self.mass * other.mass / distance_mag**2
-        self.velocity += -(gravity_force / (distance_mag * self.mass)) * distance_vec
-        other.velocity += (gravity_force / (distance_mag * other.mass)) * distance_vec
+        self.velocity += -(gravity_force / (distance_mag * self.mass)) * distance_vec * time_step
+        other.velocity += (gravity_force / (distance_mag * other.mass)) * distance_vec *time_step
 
         if np.linalg.norm(self.position - other.position) < 2*self.radius:
             self.collide(other)

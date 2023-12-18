@@ -1,7 +1,7 @@
 from solar_system import DynamicalSystem, CelestialBody
 import numpy as np
 
-solar = DynamicalSystem(400, projection2D =True ,restitution =0, closed = True)
+solar = DynamicalSystem(400, projection2D =True ,restitution =1, closed = True)
 
 Sun = CelestialBody(solar, mass = 10_000, color = "yellow")
 
