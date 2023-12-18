@@ -1,10 +1,10 @@
 """
+
 =====================================================
                   N-Body Simulation
 =====================================================
 
-This code simulates the motion and interaction of celestial bodies in a dynamical system with gravitational forces
-and inelastic collisions.
+This code provides a versatile N-Body simulation framework, allowing users to simulate the motion and interaction of celestial bodies in a dynamical system with gravitational forces and inelastic collisions. The code is organized into three main classes: `DynamicalSystem`, `NBodies`, and `CelestialBody`.
 
 Classes:
 --------
@@ -18,6 +18,7 @@ Classes:
      - `view`: Tuple specifying the initial view angles (default: (0, 0)).
      - `restitution`: Coefficient of restitution for collisions (default: 0.0).
      - `closed`: Flag indicating if the system has closed boundaries (default: False).
+     - `frame_speed`: Speed of frame updates for visualization (default: 0.01).
    - **Methods:**
      - `add_body(body)`: Add a celestial body to the system.
      - `update_all()`: Update the motion and display of all celestial bodies.
@@ -48,7 +49,28 @@ Classes:
      - `density`: Density of the body (default: 2).
      - `color`: Color of the celestial body (default: "black").
 
+Usage Example:
+--------------
+
+```python
+# Example usage of the N-Body simulation framework
+
+# Create a dynamical system with size 100, 2D projection, and closed boundaries
+system = DynamicalSystem(size=100, projection2D=True, closed=True)
+
+# Create celestial bodies and add them to the system
+body1 = CelestialBody(system, mass=15, position=np.array([10., 0., 0.]), velocity=np.array([0., 2., 0.]), color="blue")
+body2 = CelestialBody(system, mass=10, position=np.array([-20., 0., 0.]), velocity=np.array([0., -1., 0.]), color="red")
+body3 = CelestialBody(system, mass=20, position=np.array([0., 0., 30.]), velocity=np.array([1., 0., 0.]), color="green")
+
+# Run the simulation
+for _ in range(200):
+    system.dynamical_interaction()
+    system.update_all()
+    system.display_all()
+
 """
+
 
 
 import numpy as np
