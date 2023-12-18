@@ -201,8 +201,8 @@ class NBodies:
         Jn = (1 + self.dynamical_box.restitution) * (self.mass * other.mass) / total_mass * np.dot(relative_velocity, normal_vector)
 
         # Update velocities
-        self.velocity += Jn / self.mass * normal_vector
-        other.velocity -= Jn / other.mass * normal_vector
+        self.velocity -= Jn / self.mass * normal_vector
+        other.velocity += Jn / other.mass * normal_vector
 
 
 
